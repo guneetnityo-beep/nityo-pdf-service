@@ -12,7 +12,7 @@
   .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
   .company-name { font-size:14pt; font-weight:700; margin-bottom:4px; }
   .company-sub  { font-size:8pt; color:#444; line-height:1.6; }
-  .logo         { height:42px; object-fit:contain; }
+  .logo         { height:48px; object-fit:contain; }
 
   hr { border:none; border-top:1px solid #333; margin:8px 0; }
 
@@ -50,11 +50,17 @@
 
   .terms-table td:first-child { font-weight:600; width:28%; }
 
-  .signatures { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:10px; font-size:8.5pt; }
-  .sig-co  { font-weight:700; margin-bottom:6px; }
-  .sig-row { display:flex; gap:6px; line-height:2.4; margin-top:2px; }
-  .sig-lbl { white-space:nowrap; }
-  .sig-ln  { flex:1; border-bottom:1px solid #333; }
+  /* ── Signature block ── */
+  .sig-block { max-width:52%; font-size:8.5pt; margin-top:10px; }
+  .sig-co    { font-weight:700; margin-bottom:10px; }
+  .sig-field { margin-bottom:8px; }
+  .sig-lbl   { font-weight:600; display:block; margin-bottom:1px; }
+  .sig-text  { padding:1px 0 3px; }
+  .sig-line  { border-bottom:1px solid #333; }
+  .sig-gap   { height:22px; }
+
+  /* Auto-signature image */
+  .sig-img { height:30px; max-width:160px; object-fit:contain; display:block; margin-bottom:2px; }
 
   .tc { margin-left:14px; font-size:8pt; line-height:1.7; color:#333; }
   .tc li { margin-bottom:2px; }
@@ -71,9 +77,12 @@
     <div class="company-sub">
       The East, Tower 3, Jl. Dr. Ide Anak Agung Gde Agung Kav. E3.2 No.1,<br>
       Kuningan, Jakarta Selatan 12950, Indonesia<br>
-      Email: guneet.chhabra@nityo.com
+      Email: {{smEmail}}
     </div>
   </div>
+  {{#if logoBase64}}
+  <img src="data:image/png;base64,{{logoBase64}}" class="logo" alt="Nityo Logo"/>
+  {{/if}}
 </div>
 
 <hr/>
@@ -96,7 +105,7 @@
     <span class="lbl">Company:</span><br>PT Nityo Infotech Indonesia<br><br>
     <span class="lbl">Address:</span><br>
     The East, Tower 3, Jl. Dr. Ide Anak Agung Gde Agung Kav. E3.2 No.1, Kuningan, Jakarta Selatan 12950<br><br>
-    <span class="lbl">Email:</span> guneet.chhabra@nityo.com
+    <span class="lbl">Email:</span> {{smEmail}}
   </div>
   <div class="ft-cell">
     <span class="lbl">Company:</span><br>{{clientCompany}}<br><br>
@@ -158,26 +167,37 @@
   </tbody>
 </table>
 
-<!-- Signatures -->
+<!-- Signatures — Nityo only -->
 <div class="section-title">Authorized Signatures</div>
-<div class="signatures">
-  <div>
-    <div class="sig-co">For PT Nityo Infotech Indonesia</div>
-    <div class="sig-row"><span class="sig-lbl">Name:</span><span class="sig-ln"></span></div>
-    <div style="font-size:8.5pt;margin-top:-6px;">Guneet Chhabra</div>
-    <div class="sig-row"><span class="sig-lbl">Title:</span><span class="sig-ln"></span></div>
-    <div style="font-size:8.5pt;margin-top:-6px;">Growth Consultant</div>
-    <div class="sig-row" style="margin-top:18px;"><span class="sig-lbl">Signature:</span><span class="sig-ln"></span></div>
-    <div class="sig-row"><span class="sig-lbl">Date:</span><span class="sig-ln"></span></div>
+<div class="sig-block">
+  <div class="sig-co">For PT Nityo Infotech Indonesia</div>
+
+  <div class="sig-field">
+    <span class="sig-lbl">Name:</span>
+    <div class="sig-text">{{smName}}</div>
+    <div class="sig-line"></div>
   </div>
-  <div>
-    <div class="sig-co">Accepted by {{clientCompany}}</div>
-    <div class="sig-row"><span class="sig-lbl">Name:</span><span class="sig-ln"></span></div>
-    <div style="font-size:8.5pt;margin-top:-6px;">{{clientSigner}}</div>
-    <div class="sig-row"><span class="sig-lbl">Title:</span><span class="sig-ln"></span></div>
-    <div style="font-size:8.5pt;margin-top:-6px;">{{clientTitle}}</div>
-    <div class="sig-row" style="margin-top:18px;"><span class="sig-lbl">Signature:</span><span class="sig-ln"></span></div>
-    <div class="sig-row"><span class="sig-lbl">Date:</span><span class="sig-ln"></span></div>
+
+  <div class="sig-field">
+    <span class="sig-lbl">Title:</span>
+    <div class="sig-text">{{smTitle}}</div>
+    <div class="sig-line"></div>
+  </div>
+
+  <div class="sig-field" style="margin-top:14px;">
+    <span class="sig-lbl">Signature:</span>
+    {{#if smSignatureBase64}}
+    <img src="data:image/png;base64,{{smSignatureBase64}}" class="sig-img" alt="Signature"/>
+    {{else}}
+    <div class="sig-gap"></div>
+    {{/if}}
+    <div class="sig-line"></div>
+  </div>
+
+  <div class="sig-field">
+    <span class="sig-lbl">Date:</span>
+    <div class="sig-text">{{quotationDate}}</div>
+    <div class="sig-line"></div>
   </div>
 </div>
 
@@ -188,8 +208,20 @@
   <li>All quoted rates are <strong>exclusive of PPN (Pajak Pertambahan Nilai)</strong>. PPN at the prevailing rate (currently 11% per UU HPP No. 7 Tahun 2021) shall be borne by the client and reflected on the final invoice.</li>
   <li>PT Nityo Infotech Indonesia reserves the right to withdraw or amend this quotation after the validity period.</li>
   <li>All services are subject to the Master Service Agreement or mutually agreed terms between both parties.</li>
-  <li>For queries relating to this quotation, contact guneet.chhabra@nityo.com.</li>
+  <li>For queries relating to this quotation, contact {{smEmail}}.</li>
 </ul>
+
+<!-- Auto-shrink to one page -->
+<script>
+  window.addEventListener('load', function () {
+    var A4_H = 1050;
+    var scale = 1;
+    while (document.body.scrollHeight > A4_H && scale > 0.6) {
+      scale = Math.round((scale - 0.01) * 100) / 100;
+      document.body.style.zoom = scale;
+    }
+  });
+</script>
 
 </body>
 </html>
