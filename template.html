@@ -6,7 +6,7 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: 9.5pt; color: #1a1a1a; line-height: 1.35; background:#fff;
+    font-size: 9.2pt; color: #1a1a1a; line-height: 1.25; background:#fff;
   }
 
   .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
@@ -56,7 +56,7 @@
     color:#004AAB;
     font-size:10pt;
     font-weight:700;
-    margin:14px 0 8px;
+    margin:10px 0 6px;
   }
 
   table { width:100%; border-collapse:collapse; font-size:8.5pt; margin-bottom:6px; }
@@ -64,13 +64,13 @@
     background:#004AAB;
     color:#fff;
     font-weight:700;
-    padding:8px;
+    padding:6px;
     border:1px solid #ccc;
     text-align:left;
   }
 
   table td {
-    padding:8px;
+    padding:6px;
     border:1px solid #ddd;
     vertical-align:top;
   }
@@ -79,6 +79,9 @@
     background:#fafafa;
   }
   p { line-height:1.5; }
+  h1,h2,h3,h4,p {
+    margin-bottom: 4px;
+  }
   .c { text-align:center; }
   .r { text-align:right; }
 
@@ -130,7 +133,33 @@
   }
   .tc li { margin-bottom:2px; }
 
-  @media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  html, body {
+    height: 297mm;
+    width: 210mm;
+    overflow: hidden;
+  }
+
+  body {
+    transform-origin: top left;
+  }
+
+  @media print {
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      overflow: hidden;
+    }
+
+    * {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
 </style>
 </head>
 <body>
@@ -156,9 +185,9 @@
 <div class="title-bar">
   <span class="qt-title">QUOTATION</span>
   <div class="qt-meta">
-    Quotation No: <strong>{{quotationNumber}}</strong><br>
-    Date: <strong>{{quotationDate}}</strong><br>
-    Valid Until: <strong>{{validUntil}}</strong>
+    Quotation No: <strong id="qno">{{quotationNumber}}</strong><br>
+    Date: <strong id="qdate">{{quotationDate}}</strong><br>
+    Valid Until: <strong id="qvalid">{{validUntil}}</strong>
   </div>
 </div>
 
@@ -274,17 +303,47 @@
   <li>For queries relating to this quotation, contact {{smEmail}}.</li>
 </ul>
 
-<!-- Auto-shrink to one page -->
-<script>
-  window.addEventListener('load', function () {
-    var A4_H = 1050;
-    var scale = 1;
-    while (document.body.scrollHeight > A4_H && scale > 0.6) {
-      scale = Math.round((scale - 0.01) * 100) / 100;
-      document.body.style.zoom = scale;
-    }
-  });
-</script>
 
 </body>
+<script>
+  window.addEventListener('load', function () {
+    const A4_HEIGHT_PX = 1122; // approx A4 at 96dpi
+    const marginBuffer = 120;
+
+    let scale = 1;
+
+    const contentHeight = document.body.scrollHeight;
+
+    const availableHeight = A4_HEIGHT_PX - marginBuffer;
+    if (contentHeight > availableHeight) {
+      scale = availableHeight / contentHeight;
+    }
+
+    scale = Math.min(scale, 1);
+    scale = Math.max(scale, 0.6);
+
+    document.body.style.transform = `scale(${scale})`;
+    document.body.style.transformOrigin = "top left";
+
+  // Compute Valid Until (+30 days) from quotation date
+  try {
+    const qdateEl = document.getElementById("qdate");
+    const qvalidEl = document.getElementById("qvalid");
+
+    if (qdateEl && qvalidEl) {
+      const rawDate = qdateEl.innerText.trim();
+
+      const baseDate = new Date(rawDate);
+
+      if (!isNaN(baseDate.getTime())) {
+        const valid = new Date(baseDate);
+        valid.setDate(valid.getDate() + 30);
+
+        const formatted = valid.toDateString();
+        qvalidEl.innerText = formatted;
+      }
+    }
+  } catch (e) {}
+  });
+</script>
 </html>
