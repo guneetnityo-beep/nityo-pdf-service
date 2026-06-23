@@ -2,14 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 9.1pt;
-    color: #1a1a1a;
-    line-height: 1.3;
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 9.4pt;
+    color: #111827;
+    line-height: 1.25;
     background:#fff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   :root {
@@ -51,7 +56,7 @@
 
   .title-bar .qt-meta {
     text-align:right;
-    font-size:9pt;
+    font-size:9.2pt;
     line-height:1.6;
     opacity:0.95;
   }
@@ -72,7 +77,7 @@
     border-bottom:1px solid var(--border);
   }
   .ft-header:first-child { border-right:1px solid #ccc; }
-  .ft-cell { padding:8px 10px; font-size:8.5pt; line-height:1.8; }
+  .ft-cell { padding:8px 10px; font-size:9pt; line-height:1.6; color:#111827; }
   .ft-cell:first-child { border-right:1px solid #ccc; }
   .lbl { font-weight:700; }
 
@@ -98,7 +103,7 @@
   table {
     width:100%;
     border-collapse:collapse;
-    font-size:8.8pt;
+    font-size:9.2pt;
   }
   table th {
     background:#f3f6fb;
@@ -117,7 +122,7 @@
   tbody tr:nth-child(even) {
     background:#fafafa;
   }
-  p { line-height:1.5; }
+  p { line-height:1.35; color:#111827; }
   h1,h2,h3,h4,p {
     margin-bottom: 3px;
   }
@@ -185,12 +190,6 @@
     margin: 12mm;
   }
 
-  html, body {
-    height: 297mm;
-    width: 210mm;
-    overflow: hidden;
-  }
-
   body {
     transform-origin: top left;
   }
@@ -238,6 +237,10 @@
     justify-content: space-between;
     padding: 0 12mm;
     border-top: 1px solid #e5e7eb;
+  }
+
+  * {
+    text-rendering: geometricPrecision;
   }
 </style>
 </head>
@@ -405,7 +408,8 @@
     scale = Math.max(scale, 0.6);
 
     document.body.style.transform = `scale(${scale})`;
-    document.body.style.transformOrigin = "top left";
+    document.body.style.transformOrigin = "top center";
+    document.body.style.margin = "0 auto";
 
   // Compute Valid Until (+30 days) from quotation date
   try {
