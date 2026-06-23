@@ -2,19 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    font-size: 9.4pt;
-    color: #111827;
-    line-height: 1.25;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-size: 9.1pt;
+    color: #1a1a1a;
+    line-height: 1.3;
     background:#fff;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
   :root {
@@ -56,7 +51,7 @@
 
   .title-bar .qt-meta {
     text-align:right;
-    font-size:9.2pt;
+    font-size:9pt;
     line-height:1.6;
     opacity:0.95;
   }
@@ -77,7 +72,7 @@
     border-bottom:1px solid var(--border);
   }
   .ft-header:first-child { border-right:1px solid #ccc; }
-  .ft-cell { padding:8px 10px; font-size:9pt; line-height:1.6; color:#111827; }
+  .ft-cell { padding:8px 10px; font-size:8.5pt; line-height:1.8; }
   .ft-cell:first-child { border-right:1px solid #ccc; }
   .lbl { font-weight:700; }
 
@@ -103,7 +98,7 @@
   table {
     width:100%;
     border-collapse:collapse;
-    font-size:9.2pt;
+    font-size:8.8pt;
   }
   table th {
     background:#f3f6fb;
@@ -122,7 +117,7 @@
   tbody tr:nth-child(even) {
     background:#fafafa;
   }
-  p { line-height:1.35; color:#111827; }
+  p { line-height:1.5; }
   h1,h2,h3,h4,p {
     margin-bottom: 3px;
   }
@@ -135,13 +130,13 @@
   .terms-table td:first-child { font-weight:600; width:28%; }
 
   /* ── Signature block ── */
-  .sig-block { max-width:52%; font-size:8.5pt; margin-top:10px; }
+  .sig-block { max-width:52%; font-size:8.5pt; margin-top:6px; }
   .sig-co    {
     font-weight:700;
     margin-bottom:10px;
     color:var(--primary);
   }
-  .sig-field { margin-bottom:10px; }
+  .sig-field { margin-bottom:6px; }
   .sig-lbl   {
     font-size:8.5pt;
     color:var(--muted);
@@ -151,18 +146,18 @@
   .sig-text  { padding:1px 0 3px; }
 
   .sig-img {
-    height:30px;
+    height:24px;
     max-width:160px;
     object-fit:contain;
     display:block;
-    margin-bottom:6px;
+    margin-bottom:4px;
   }
 
   /* Signature box styling */
   .sig-box {
     border:1px solid var(--border);
     border-radius:10px;
-    padding:14px;
+    padding:10px;
     background:#fff;
   }
 
@@ -172,10 +167,10 @@
 
   .sig-line {
     border-bottom:1px solid #cfd6e4;
-    margin-top:6px;
+    margin-top:4px;
   }
 
-  .sig-gap   { height:22px; }
+  .sig-gap   { height:14px; }
 
   .tc {
     margin-left:14px;
@@ -185,9 +180,46 @@
   }
   .tc li { margin-bottom:2px; }
 
+  .sig-tc-wrapper {
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    margin-top:6px;
+  }
+
+  .sig-tc-wrapper .sig-block {
+    max-width:55%;
+  }
+
+  .tc-mini {
+    font-size:7.5pt;
+    color:#333;
+    line-height:1.35;
+  }
+
+  .tc-mini-title {
+    font-weight:700;
+    color:var(--primary);
+    margin-bottom:4px;
+  }
+
+  .tc-mini ul {
+    margin-left:12px;
+  }
+
+  .tc-mini li {
+    margin-bottom:2px;
+  }
+
   @page {
     size: A4;
     margin: 12mm;
+  }
+
+  html, body {
+    height: 297mm;
+    width: 210mm;
+    overflow: hidden;
   }
 
   body {
@@ -237,10 +269,6 @@
     justify-content: space-between;
     padding: 0 12mm;
     border-top: 1px solid #e5e7eb;
-  }
-
-  * {
-    text-rendering: geometricPrecision;
   }
 </style>
 </head>
@@ -344,47 +372,54 @@
   </tbody>
 </table>
 
-<!-- Signatures — Nityo only -->
+<!-- Signature + Terms (side by side) -->
 <div class="section-title">Authorized Signatures</div>
-<div class="sig-block sig-box">
-  <div class="sig-co">For PT Nityo Infotech Indonesia</div>
 
-  <div class="sig-field sig-row">
-    <span class="sig-lbl">Name:</span>
-    <div class="sig-text">{{smName}}</div>
+<div class="sig-tc-wrapper">
+
+  <!-- LEFT: Signature -->
+  <div class="sig-block sig-box">
+    <div class="sig-co">For PT Nityo Infotech Indonesia</div>
+
+    <div class="sig-field sig-row">
+      <span class="sig-lbl">Name:</span>
+      <div class="sig-text">{{smName}}</div>
+    </div>
+
+    <div class="sig-field sig-row">
+      <span class="sig-lbl">Title:</span>
+      <div class="sig-text">{{smTitle}}</div>
+    </div>
+
+    <div class="sig-field sig-row">
+      <span class="sig-lbl">Signature:</span>
+      {{#if smSignatureBase64}}
+      <img src="data:image/png;base64,{{smSignatureBase64}}" class="sig-img" alt="Signature"/>
+      {{else}}
+      <div class="sig-gap"></div>
+      {{/if}}
+      <div class="sig-line"></div>
+    </div>
+
+    <div class="sig-field sig-row">
+      <span class="sig-lbl">Date:</span>
+      <div class="sig-text">{{quotationDate}}</div>
+      <div class="sig-line"></div>
+    </div>
   </div>
 
-  <div class="sig-field sig-row">
-    <span class="sig-lbl">Title:</span>
-    <div class="sig-text">{{smTitle}}</div>
+  <!-- RIGHT: Compact Terms -->
+  <div class="tc-mini">
+    <div class="tc-mini-title">Terms</div>
+    <ul>
+      <li>Not binding until PO/acceptance</li>
+      <li>Excl. 11% VAT (PPN)</li>
+      <li>Subject to MSA/agreed terms</li>
+      <li>May be amended after validity</li>
+    </ul>
   </div>
 
-  <div class="sig-field sig-row">
-    <span class="sig-lbl">Signature:</span>
-    {{#if smSignatureBase64}}
-    <img src="data:image/png;base64,{{smSignatureBase64}}" class="sig-img" alt="Signature"/>
-    {{else}}
-    <div class="sig-gap"></div>
-    {{/if}} 
-    <div class="sig-line"></div>
-  </div>
-
-  <div class="sig-field sig-row">
-    <span class="sig-lbl">Date:</span>
-    <div class="sig-text">{{quotationDate}}</div>
-    <div class="sig-line"></div>
-  </div>
 </div>
-
-<!-- T&C -->
-<div class="section-title" style="margin-top:10px;">Terms &amp; Conditions</div>
-<ul class="tc">
-  <li>This quotation is not binding until a Purchase Order or written acceptance is received by PT Nityo Infotech Indonesia.</li>
-  <li>All quoted rates are <strong>exclusive of PPN (Pajak Pertambahan Nilai)</strong>. PPN at the prevailing rate (currently 11% per UU HPP No. 7 Tahun 2021) shall be borne by the client and reflected on the final invoice.</li>
-  <li>PT Nityo Infotech Indonesia reserves the right to withdraw or amend this quotation after the validity period.</li>
-  <li>All services are subject to the Master Service Agreement or mutually agreed terms between both parties.</li>
-  <li>For queries relating to this quotation, contact {{smEmail}}.</li>
-</ul>
 
 <div class="footer">
   <div>PT Nityo Infotech Indonesia</div>
@@ -408,8 +443,7 @@
     scale = Math.max(scale, 0.6);
 
     document.body.style.transform = `scale(${scale})`;
-    document.body.style.transformOrigin = "top center";
-    document.body.style.margin = "0 auto";
+    document.body.style.transformOrigin = "top left";
 
   // Compute Valid Until (+30 days) from quotation date
   try {
