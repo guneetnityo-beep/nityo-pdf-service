@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:9.5pt; color:#1a1a1a; line-height:1.35; background:#fff; }
+
+  .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+  .company-name { font-size:14pt; font-weight:700; margin-bottom:4px; }
+  .company-sub  { font-size:8pt; color:#444; line-height:1.6; }
+
+  hr { border:none; border-top:1px solid #333; margin:8px 0; }
+
+  .title-bar { background:#004AAB; color:#fff; display:flex; justify-content:space-between; align-items:center; padding:8px 12px; margin-bottom:8px; }
+  .qt-title  { font-size:18pt; font-weight:700; }
+  .qt-meta   { text-align:right; font-size:8.5pt; line-height:1.9; }
+
+  .from-to { display:grid; grid-template-columns:1fr 1fr; border:1px solid #ccc; margin-bottom:8px; }
+  .ft-hdr  { background:#f2f2f2; font-weight:700; text-align:center; padding:4px 10px; font-size:8.5pt; border-bottom:1px solid #ccc; }
+  .ft-hdr:first-child { border-right:1px solid #ccc; }
+  .ft-cell { padding:8px 10px; font-size:8.5pt; line-height:1.8; }
+  .ft-cell:first-child { border-right:1px solid #ccc; }
+  .lbl { font-weight:700; }
+
+  .sec { color:#004AAB; font-size:9.5pt; font-weight:700; margin:10px 0 4px; }
+
+  table { width:100%; border-collapse:collapse; font-size:8.5pt; margin-bottom:6px; }
+  table th { background:#f2f2f2; font-weight:700; padding:6px 8px; border:1px solid #ccc; text-align:left; }
+  table td { padding:6px 8px; border:1px solid #ccc; vertical-align:top; }
+  .c { text-align:center; } .r { text-align:right; }
+
+  .gt td { background:#004AAB; color:#fff; font-weight:700; padding:7px 10px; font-size:9.5pt; }
+  .terms-tbl td:first-child { font-weight:600; width:28%; }
+
+  .sigs { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:10px; font-size:8.5pt; }
+  .sig-co  { font-weight:700; margin-bottom:6px; }
+  .sig-row { display:flex; gap:6px; line-height:2.4; margin-top:2px; }
+  .sig-lbl { white-space:nowrap; }
+  .sig-ln  { flex:1; border-bottom:1px solid #333; }
+
+  .tc    { margin-left:14px; font-size:8pt; line-height:1.7; color:#333; }
+  .tc li { margin-bottom:2px; }
+
+  @media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+
+<!-- Header — dynamic sender block -->
+<div class="header">
+  <div>
+    <div class="company-name">{{sender.company}}</div>
+    <div class="company-sub">
+      {{sender.address}}<br>
+      Email: {{sender.email}}
+    </div>
+  </div>
+</div>
+
+<hr/>
+
+<!-- Title bar -->
+<div class="title-bar">
+  <span class="qt-title">QUOTATION</span>
+  <div class="qt-meta">
+    Quotation No: <strong>{{quotationNumber}}</strong><br>
+    Date: <strong>{{quotationDate}}</strong><br>
+    Valid Until: <strong>{{validUntil}}</strong>
+  </div>
+</div>
+
+<!-- From / To -->
+<div class="from-to">
+  <div class="ft-hdr">From</div><div class="ft-hdr">To</div>
+  <div class="ft-cell">
+    <span class="lbl">Company:</span><br>{{sender.company}}<br><br>
+    <span class="lbl">Address:</span><br>{{sender.address}}<br><br>
+    <span class="lbl">Email:</span> {{sender.email}}
+  </div>
+  <div class="ft-cell">
+    <span class="lbl">Company:</span><br>{{clientCompany}}<br><br>
+    <span class="lbl">Address:</span><br>{{clientAddress}}<br><br>
+    <span class="lbl">Attention:</span> {{clientContact}}<br>
+    <span class="lbl">Email:</span> {{clientEmail}}
+  </div>
+</div>
+
+<!-- Scope -->
+<div class="sec">Scope of Services</div>
+<p style="font-size:8.5pt;margin-bottom:6px;color:#333;">
+  We are pleased to submit this quotation for professional staffing and resource services as detailed below.
+  All rates are quoted on a monthly basis for the duration specified.
+</p>
+
+<!-- Line items -->
+<table>
+  <thead>
+    <tr>
+      <th class="c" style="width:5%">No</th>
+      <th>Description</th>
+      <th class="c" style="width:14%">Duration</th>
+      <th class="r" style="width:20%">Monthly Rate (IDR)</th>
+      <th class="r" style="width:18%">Total (IDR)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each lineItems}}
+    <tr>
+      <td class="c">{{no}}</td>
+      <td>{{description}}</td>
+      <td class="c">{{durationLabel}}</td>
+      <td class="r">{{monthlyRateFormatted}}</td>
+      <td class="r">{{totalFormatted}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<!-- Grand total -->
+<table class="gt"><tr>
+  <td>Grand Total (Excl. PPN)</td>
+  <td class="r">{{grandTotalFormatted}}</td>
+</tr></table>
+
+<!-- Commercial terms -->
+<div class="sec">Commercial Terms</div>
+<table class="terms-tbl" style="margin-bottom:8px;">
+  <thead><tr><th>Term</th><th>Detail</th></tr></thead>
+  <tbody>
+    <tr><td>Currency</td><td>Indonesian Rupiah (IDR)</td></tr>
+    <tr><td>Billing</td><td>Monthly invoice based on actual service period rendered</td></tr>
+    <tr><td>Payment Terms</td><td>Net 14 days from date of invoice</td></tr>
+    <tr><td>Invoice To</td><td>{{clientCompany}}</td></tr>
+    <tr><td>Quotation Validity</td><td>30 days from date of issue</td></tr>
+  </tbody>
+</table>
+
+<!-- Signatures — dynamic manager -->
+<div class="sec">Authorized Signatures</div>
+<div class="sigs">
+  <div>
+    <div class="sig-co">For {{sender.company}}</div>
+    <div class="sig-row"><span class="sig-lbl">Name:</span><span class="sig-ln"></span></div>
+    <div style="font-size:8.5pt;margin-top:-6px;">{{manager.name}}</div>
+    <div class="sig-row"><span class="sig-lbl">Title:</span><span class="sig-ln"></span></div>
+    <div style="font-size:8.5pt;margin-top:-6px;">{{manager.title}}</div>
+    <div class="sig-row" style="margin-top:18px;"><span class="sig-lbl">Signature:</span><span class="sig-ln"></span></div>
+    <div class="sig-row"><span class="sig-lbl">Date:</span><span class="sig-ln"></span></div>
+  </div>
+  <div>
+    <div class="sig-co">Accepted by {{clientCompany}}</div>
+    <div class="sig-row"><span class="sig-lbl">Name:</span><span class="sig-ln"></span></div>
+    <div style="font-size:8.5pt;margin-top:-6px;">{{clientSigner}}</div>
+    <div class="sig-row"><span class="sig-lbl">Title:</span><span class="sig-ln"></span></div>
+    <div style="font-size:8.5pt;margin-top:-6px;">{{clientTitle}}</div>
+    <div class="sig-row" style="margin-top:18px;"><span class="sig-lbl">Signature:</span><span class="sig-ln"></span></div>
+    <div class="sig-row"><span class="sig-lbl">Date:</span><span class="sig-ln"></span></div>
+  </div>
+</div>
+
+<!-- T&C — fully dynamic -->
+<div class="sec" style="margin-top:10px;">Terms &amp; Conditions</div>
+<ul class="tc">
+  {{#each terms}}
+  <li>{{this}}</li>
+  {{/each}}
+</ul>
+
+</body>
+</html>
