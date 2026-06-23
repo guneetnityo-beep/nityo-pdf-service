@@ -93,13 +93,41 @@
   .sig-field { margin-bottom:8px; }
   .sig-lbl   { font-weight:600; display:block; margin-bottom:1px; }
   .sig-text  { padding:1px 0 3px; }
-  .sig-line  { border-bottom:1px solid #333; }
+
+  .sig-img {
+    height:30px;
+    max-width:160px;
+    object-fit:contain;
+    display:block;
+    margin-bottom:6px;
+  }
+
+  /* Signature box styling */
+  .sig-box {
+    border:1px solid #ccc;
+    padding:12px 14px;
+    border-radius:6px;
+    background:#fafafa;
+    margin-top:10px;
+  }
+
+  .sig-row {
+    margin-bottom:10px;
+  }
+
+  .sig-line {
+    border-bottom:1px solid #333;
+    margin-top:4px;
+  }
+
   .sig-gap   { height:22px; }
 
-  /* Auto-signature image */
-  .sig-img { height:30px; max-width:160px; object-fit:contain; display:block; margin-bottom:2px; }
-
-  .tc { margin-left:14px; font-size:8pt; line-height:1.7; color:#333; }
+  .tc {
+    margin-left:14px;
+    font-size:8pt;
+    line-height:1.7;
+    color:#333;
+  }
   .tc li { margin-bottom:2px; }
 
   @media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
@@ -206,20 +234,20 @@
 
 <!-- Signatures — Nityo only -->
 <div class="section-title">Authorized Signatures</div>
-<div class="sig-block">
+<div class="sig-block sig-box">
   <div class="sig-co">For PT Nityo Infotech Indonesia</div>
 
-  <div class="sig-field">
+  <div class="sig-field sig-row">
     <span class="sig-lbl">Name:</span>
     <div class="sig-text">{{smName}}</div>
   </div>
 
-  <div class="sig-field">
+  <div class="sig-field sig-row">
     <span class="sig-lbl">Title:</span>
     <div class="sig-text">{{smTitle}}</div>
   </div>
 
-  <div class="sig-field" style="margin-top:14px;">
+  <div class="sig-field sig-row">
     <span class="sig-lbl">Signature:</span>
     {{#if smSignatureBase64}}
     <img src="data:image/png;base64,{{smSignatureBase64}}" class="sig-img" alt="Signature"/>
@@ -229,7 +257,7 @@
     <div class="sig-line"></div>
   </div>
 
-  <div class="sig-field">
+  <div class="sig-field sig-row">
     <span class="sig-lbl">Date:</span>
     <div class="sig-text">{{quotationDate}}</div>
     <div class="sig-line"></div>
