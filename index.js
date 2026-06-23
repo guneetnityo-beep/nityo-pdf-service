@@ -7,13 +7,21 @@ const path       = require("path");
 
 const app = express();
 app.use(cors());
-app.use(express.json({ limit: "5mb" }));
+app.use(express.json({ limit: "10mb" }));
+
+// ── Load constants from env ──────────────────────────────────
+const LOGO_B64 = process.env.NITYO_LOGO_BASE64 || "";
+
+// ── Parse SM list from env var (set SM_LIST on Railway) ─────
+// Format: [{"id":"guneet","name":"...","title":"...","email":"..."}]
+const SM_LIST = (() => {
+  try { return JSON.parse(process.env.SM_LIST || "[]"); } catch { return []; }
+})();
 
 // ── Compile template once ────────────────────────────────────
 const templateSrc = fs.readFileSync(path.join(__dirname, "template.html"), "utf8");
 const template    = Handlebars.compile(templateSrc);
 
-// ── Helpers ──────────────────────────────────────────────────
 Handlebars.registerHelper("formatIDR", val => {
   const n = typeof val === "string" ? parseInt(val.replace(/\D/g, "")) : (val || 0);
   return "IDR " + n.toLocaleString("id-ID");
@@ -29,10 +37,34 @@ function parseIDR(v) {
   return parseInt(String(v || "0").replace(/\D/g, "")) || 0;
 }
 
+// ── GET /sm-list ─────────────────────────────────────────────
+app.get("/sm-list", (_, res) => {
+  res.json(SM_LIST.map(({ id, name, title, email }) => ({ id, name, title, email })));
+});
+
 // ── POST /generate-pdf ───────────────────────────────────────
 app.post("/generate-pdf", async (req, res) => {
   try {
     const data = { ...req.body };
+
+    // Resolve SM from SM_LIST env var
+    if (data.smId) {
+      const sm = SM_LIST.find(s => s.id === data.smId);
+      if (sm) {
+        data.smName  = data.smName  || sm.name;
+        data.smTitle = data.smTitle || sm.title;
+        data.smEmail = data.smEmail || sm.email;
+        // Auto-inject signature: SIG_GUNEET, SIG_PRASHANTH, etc.
+        const sigKey = `SIG_${data.smId.toUpperCase()}`;
+        if (process.env[sigKey] && !data.smSignatureBase64) {
+          data.smSignatureBase64 = process.env[sigKey];
+        }
+      }
+    }
+
+    data.logoBase64    = LOGO_B64;
+    data.quotationDate = formatDate(new Date());
+    data.validUntil    = formatDate(addDays(new Date(), 30));
 
     // Enrich line items
     data.lineItems = (data.lineItems || []).map((item, i) => {
@@ -50,8 +82,6 @@ app.post("/generate-pdf", async (req, res) => {
 
     const grandTotal = data.lineItems.reduce((s, i) => s + i.totalAmount, 0);
     data.grandTotalFormatted = "IDR " + grandTotal.toLocaleString("id-ID");
-    data.quotationDate = data.quotationDate || formatDate(new Date());
-    data.validUntil    = data.validUntil    || formatDate(addDays(new Date(), 30));
 
     // Render → PDF
     const html    = template(data);
@@ -60,7 +90,10 @@ app.post("/generate-pdf", async (req, res) => {
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
+    await page.setContent(html, { waitUntil: "domcontentloaded" });
+    // Wait for auto-shrink JS
+    await new Promise(r => setTimeout(r, 350));
+
     const pdfBuffer = await page.pdf({
       format         : "A4",
       printBackground: true,
@@ -74,6 +107,7 @@ app.post("/generate-pdf", async (req, res) => {
       "Content-Length"     : pdfBuffer.length,
     });
     res.send(pdfBuffer);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
