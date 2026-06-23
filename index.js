@@ -10,7 +10,9 @@ app.use(cors());
 app.use(express.json({ limit: "10mb" }));
 
 // ── Load constants from env ──────────────────────────────────
-const LOGO_B64 = process.env.NITYO_LOGO_BASE64 || "";
+const LOGO_B64 = fs.existsSync(path.join(__dirname, "logo.png"))
+  ? fs.readFileSync(path.join(__dirname, "logo.png")).toString("base64")
+  : "";
 
 // ── Parse SM list from env var (set SM_LIST on Railway) ─────
 // Format: [{"id":"guneet","name":"...","title":"...","email":"..."}]
