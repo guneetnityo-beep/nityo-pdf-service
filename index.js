@@ -67,52 +67,45 @@ app.post("/generate-pdf", async (req, res) => {
 
     const lineSubtotal = data.lineItems.reduce((s, i) => s + i.totalAmount, 0);
 
-    // ── Breakdown rows ───────────────────────────────────
-    // Each breakdownRow: { label, type: "subtotal"|"add"|"subtract"|"percent"|"ppn"|"total", value, formatted }
+    // ── Line items grand total (PPN applied here if toggled) ─────────
+    let grandTotal = lineSubtotal;
+    if (data.includePpn) {
+      grandTotal = lineSubtotal + Math.round(lineSubtotal * 0.11);
+    }
+    data.grandTotalFormatted = idr(grandTotal);
+    data.ppnFormatted        = idr(Math.round(lineSubtotal * 0.11));
+    data.totalInclPpnFormatted = idr(grandTotal);
+
+    // ── Breakdown rows (SEPARATE from line items — informational only) ─
+    // These do NOT affect grandTotal. They are their own standalone table.
     const bdRows = [];
+    let bdRunning = 0;
 
-    // Line item subtotals (always shown in breakdown)
-    data.lineItems.forEach(item => {
-      bdRows.push({ label: item.description, type: "item", formatted: item.totalFormatted });
-    });
-
-    // Subtotal row
-    bdRows.push({ label: "Subtotal", type: "subtotal", formatted: idr(lineSubtotal) });
-
-    // Custom adjustment rows from UI
-    let running = lineSubtotal;
     (data.breakdownRows || []).forEach(row => {
       if (!row.label) return;
       let amount = 0;
       if (row.kind === "add") {
         amount = parseIDR(row.value);
-        running += amount;
-        bdRows.push({ label: row.label, type: "add", formatted: "+ " + idr(amount) });
+        bdRunning += amount;
+        bdRows.push({ label: row.label, type: "add", formatted: idr(amount) });
       } else if (row.kind === "subtract") {
         amount = parseIDR(row.value);
-        running -= amount;
+        bdRunning -= amount;
         bdRows.push({ label: row.label, type: "subtract", formatted: "- " + idr(amount) });
       } else if (row.kind === "percent") {
         const pct = parseFloat(row.value) || 0;
         amount = Math.round(lineSubtotal * pct / 100);
-        running += amount;
-        bdRows.push({ label: `${row.label} (${pct}%)`, type: "add", formatted: (amount >= 0 ? "+ " : "- ") + idr(Math.abs(amount)) });
+        bdRunning += amount;
+        bdRows.push({ label: `${row.label} (${pct}%)`, type: "add", formatted: idr(Math.abs(amount)) });
       }
     });
 
-    // PPN
-    let grandTotal = running;
-    if (data.includePpn) {
-      const ppn = Math.round(running * 0.11);
-      grandTotal = running + ppn;
-      bdRows.push({ label: "PPN 11%", type: "ppn", formatted: "+ " + idr(ppn) });
+    if (bdRows.length > 0) {
+      bdRows.push({ label: "Breakdown Total", type: "total", formatted: idr(bdRunning) });
     }
 
-    bdRows.push({ label: data.includePpn ? "Grand Total (incl. PPN)" : "Grand Total (excl. PPN)", type: "total", formatted: idr(grandTotal) });
-
-    data.bdRows          = bdRows;
-    data.showBreakdown   = !!data.showBreakdown;
-    data.grandTotalFormatted = idr(grandTotal);
+    data.bdRows        = bdRows;
+    data.showBreakdown = !!data.showBreakdown && bdRows.length > 0;
 
     // ── Render ────────────────────────────────────────────
     const html    = template(data);
