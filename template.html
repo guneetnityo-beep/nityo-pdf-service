@@ -86,6 +86,7 @@
     gap:6px;
   }
 
+
   .section-title::before {
     content:"";
     width:4px;
@@ -130,7 +131,11 @@
   .terms-table td:first-child { font-weight:600; width:28%; }
 
   /* ── Signature block ── */
-  .sig-block { max-width:52%; font-size:8.5pt; margin-top:6px; }
+  .sig-block {
+    max-width:none;
+    font-size:8.5pt;
+    margin-top:0;
+  }
   .sig-co    {
     font-weight:700;
     margin-bottom:10px;
@@ -146,23 +151,23 @@
   .sig-text  { padding:1px 0 3px; }
 
   .sig-img {
-    height:24px;
-    max-width:160px;
+    height:32px;
+    max-width:180px;
     object-fit:contain;
     display:block;
-    margin-bottom:4px;
+    margin:2px 0;
   }
 
   /* Signature box styling */
   .sig-box {
     border:1px solid var(--border);
-    border-radius:10px;
-    padding:10px;
+    border-radius:8px;
+    padding:8px 10px;
     background:#fff;
   }
 
   .sig-row {
-    margin-bottom:10px;
+    margin-bottom:6px;
   }
 
   .sig-line {
@@ -181,10 +186,11 @@
   .tc li { margin-bottom:2px; }
 
   .sig-tc-wrapper {
-    display:flex;
-    gap:12px;
-    align-items:flex-start;
-    margin-top:6px;
+    display:grid;
+    grid-template-columns: 1fr 220px;
+    gap:14px;
+    align-items:stretch;
+    margin-top:8px;
   }
 
   .sig-tc-wrapper .sig-block {
@@ -192,9 +198,13 @@
   }
 
   .tc-mini {
-    font-size:7.5pt;
+    font-size:7.3pt;
     color:#333;
-    line-height:1.35;
+    line-height:1.45;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:8px;
+    background:#fafbfc;
   }
 
   .tc-mini-title {
@@ -217,9 +227,8 @@
   }
 
   html, body {
-    height: 297mm;
-    width: 210mm;
-    overflow: hidden;
+    width: 100%;
+    min-height: 100%;
   }
 
   body {
@@ -230,7 +239,6 @@
     body {
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
-      overflow: hidden;
     }
 
     * {
@@ -393,12 +401,13 @@
 
     <div class="sig-field sig-row">
       <span class="sig-lbl">Signature:</span>
+      <div style="height:8px"></div>
       {{#if smSignatureBase64}}
       <img src="data:image/png;base64,{{smSignatureBase64}}" class="sig-img" alt="Signature"/>
       {{else}}
       <div class="sig-gap"></div>
       {{/if}}
-      <div class="sig-line"></div>
+      <div class="sig-line" style="margin-top:6px"></div>
     </div>
 
     <div class="sig-field sig-row">
@@ -426,45 +435,20 @@
   <div>Confidential Quotation Document</div>
 </div>
 <script>
-  window.addEventListener('load', function () {
-    const A4_HEIGHT_PX = 1122; // approx A4 at 96dpi
-    const marginBuffer = 120;
+try {
+  const qdateEl = document.getElementById('qdate');
+  const qvalidEl = document.getElementById('qvalid');
 
-    let scale = 1;
+  if (qdateEl && qvalidEl) {
+    const baseDate = new Date(qdateEl.innerText.trim());
 
-    const contentHeight = document.body.scrollHeight;
-
-    const availableHeight = A4_HEIGHT_PX - marginBuffer;
-    if (contentHeight > availableHeight) {
-      scale = availableHeight / contentHeight;
+    if (!isNaN(baseDate.getTime())) {
+      const valid = new Date(baseDate);
+      valid.setDate(valid.getDate() + 30);
+      qvalidEl.innerText = valid.toDateString();
     }
-
-    scale = Math.min(scale, 1);
-    scale = Math.max(scale, 0.6);
-
-    document.body.style.transform = `scale(${scale})`;
-    document.body.style.transformOrigin = "top left";
-
-  // Compute Valid Until (+30 days) from quotation date
-  try {
-    const qdateEl = document.getElementById("qdate");
-    const qvalidEl = document.getElementById("qvalid");
-
-    if (qdateEl && qvalidEl) {
-      const rawDate = qdateEl.innerText.trim();
-
-      const baseDate = new Date(rawDate);
-
-      if (!isNaN(baseDate.getTime())) {
-        const valid = new Date(baseDate);
-        valid.setDate(valid.getDate() + 30);
-
-        const formatted = valid.toDateString();
-        qvalidEl.innerText = formatted;
-      }
-    }
-  } catch (e) {}
-  });
+  }
+} catch (e) {}
 </script>
 </body>
 </html>
