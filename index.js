@@ -138,3 +138,43 @@ app.get("/health", (_, res) => res.json({ status: "ok" }));
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`PDF service on :${PORT}`));
+
+// ── Rate Card PDF endpoint ────────────────────────────────────
+const rcTemplateSrc = fs.readFileSync(path.join(__dirname, "rate-card-template.html"), "utf8");
+const rcTemplate    = Handlebars.compile(rcTemplateSrc);
+
+app.post("/generate-rate-card-pdf", async (req, res) => {
+  try {
+    const data = { ...req.body };
+
+    data.smEmail           = (data.sender  && data.sender.email)            || "";
+    data.smName            = (data.manager && data.manager.name)            || "";
+    data.smTitle           = (data.manager && data.manager.title)           || "";
+    data.smSignatureBase64 = (data.manager && data.manager.signatureBase64) || "";
+    data.logoBase64        = logoBase64;
+
+    // Group roles by level
+    const levels = ["Junior","Mid","Senior"];
+    data.grouped = levels.map(level => ({
+      level,
+      roles: (data.roles || []).filter(r => r.level === level).map(r => ({
+        ...r,
+        minRateFormatted: "IDR " + Math.round(r.minRate||0).toLocaleString("id-ID"),
+        maxRateFormatted: "IDR " + Math.round(r.maxRate||0).toLocaleString("id-ID"),
+      })),
+    })).filter(g => g.roles.length > 0);
+
+    const html    = rcTemplate(data);
+    const browser = await puppeteer.launch({ headless:"new", args:["--no-sandbox","--disable-setuid-sandbox"] });
+    const page    = await browser.newPage();
+    await page.setContent(html, { waitUntil:"networkidle0" });
+    const pdfBuffer = await page.pdf({ format:"A4", printBackground:true, margin:{ top:"12mm", bottom:"14mm", left:"14mm", right:"14mm" } });
+    await browser.close();
+
+    res.set({ "Content-Type":"application/pdf", "Content-Length":pdfBuffer.length });
+    res.send(pdfBuffer);
+  } catch(err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});

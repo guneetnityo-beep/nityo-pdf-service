@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+:root { --blue:#004AAB; --blue2:#0a58d1; --border:#e2e6ea; --soft:#f6f8fb; --muted:#6b7280; }
+body { font-family:"Helvetica Neue", Helvetica, Arial, sans-serif; font-size:8.5pt; color:#1a1a1a; line-height:1.4; background:#fff; }
+
+.wm { position:fixed; top:45%; left:50%; transform:translate(-50%,-50%) rotate(-30deg); font-size:72pt; font-weight:900; color:rgba(0,74,171,0.04); white-space:nowrap; pointer-events:none; z-index:0; letter-spacing:6px; }
+
+.header { display:flex; justify-content:space-between; align-items:flex-start; padding-bottom:8px; border-bottom:2px solid var(--blue); margin-bottom:10px; }
+.co-name { font-size:13pt; font-weight:800; color:var(--blue); }
+.co-sub  { font-size:7.5pt; color:#555; line-height:1.6; margin-top:3px; }
+.header-logo { height:42px; object-fit:contain; }
+
+.title-bar { background:linear-gradient(120deg,var(--blue),var(--blue2)); color:#fff; display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-radius:6px; margin-bottom:12px; }
+.tb-title { font-size:17pt; font-weight:800; letter-spacing:1px; }
+.tb-right { text-align:right; font-size:8pt; line-height:1.9; }
+.tb-right strong { font-size:8.5pt; }
+
+.client-box { border:1px solid var(--border); border-radius:6px; padding:8px 12px; margin-bottom:12px; font-size:8pt; background:var(--soft); }
+.client-box .lbl { font-weight:700; color:var(--blue); }
+
+.sec-head { display:flex; align-items:center; gap:7px; font-size:9pt; font-weight:700; color:var(--blue); margin:12px 0 5px; }
+.sec-head::before { content:""; display:block; width:3px; height:13px; background:var(--blue); border-radius:2px; flex-shrink:0; }
+
+.level-badge { display:inline-block; padding:2px 10px; border-radius:10px; font-size:8pt; font-weight:700; margin-bottom:6px; }
+.level-Junior { background:#dcfce7; color:#16a34a; }
+.level-Mid    { background:#dbeafe; color:#0071e3; }
+.level-Senior { background:#f3e8ff; color:#9333ea; }
+
+.tbl { width:100%; border-collapse:collapse; border:1px solid var(--border); border-radius:6px; overflow:hidden; font-size:8pt; margin-bottom:10px; }
+.tbl th { background:var(--soft); font-weight:700; padding:6px 8px; text-align:left; border-bottom:2px solid var(--blue); color:#222; font-size:7.5pt; text-transform:uppercase; letter-spacing:.03em; }
+.tbl td { padding:6px 8px; border-bottom:1px solid #f0f0f2; vertical-align:middle; }
+.tbl tbody tr:last-child td { border-bottom:none; }
+.tbl tbody tr:nth-child(even) td { background:#fafbfc; }
+
+.rate-cell { font-weight:600; color:var(--blue); white-space:nowrap; }
+
+.sig-box { border:1px solid var(--border); border-radius:6px; padding:10px 12px; font-size:8pt; margin-top:12px; max-width:280px; }
+.sig-for  { font-weight:700; color:var(--blue); margin-bottom:8px; }
+.sig-lbl  { font-size:7pt; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:2px; }
+.sig-val  { font-weight:600; padding-bottom:4px; border-bottom:1px solid #d1d5db; margin-bottom:8px; }
+.sig-img  { height:28px; max-width:150px; object-fit:contain; display:block; margin:2px 0 4px; }
+.sig-space{ height:28px; border-bottom:1px solid #d1d5db; margin-bottom:8px; }
+
+.note-box { border-left:3px solid var(--blue); background:var(--soft); padding:8px 12px; border-radius:0 6px 6px 0; font-size:8pt; color:#555; margin-top:8px; }
+
+@page { size:A4; margin:12mm 14mm 14mm 14mm; }
+.tbl, .sig-box, .client-box { page-break-inside:avoid; }
+.sec-head { page-break-after:avoid; }
+</style>
+</head>
+<body>
+<div class="wm">CONFIDENTIAL</div>
+
+<div class="header">
+  <div>
+    <div class="co-name">PT Nityo Infotech Indonesia</div>
+    <div class="co-sub">The East, Tower 3, Jl. Dr. Ide Anak Agung Gde Agung Kav. E3.2 No.1, Kuningan, Jakarta Selatan 12950<br>{{smEmail}}</div>
+  </div>
+  {{#if logoBase64}}<img class="header-logo" src="data:image/png;base64,{{logoBase64}}" alt="Nityo Logo"/>{{/if}}
+</div>
+
+<div class="title-bar">
+  <div class="tb-title">RATE CARD</div>
+  <div class="tb-right">
+    Ref: <strong>{{rcNumber}}</strong><br>
+    Date: <strong>{{dateStr}}</strong><br>
+    Prepared by: <strong>{{smName}}</strong>
+  </div>
+</div>
+
+<div class="client-box">
+  <span class="lbl">Prepared for:</span> {{client.company}} &nbsp;&nbsp;
+  <span class="lbl">Attention:</span> {{client.contact}}
+  {{#if client.email}}&nbsp;&nbsp;<span class="lbl">Email:</span> {{client.email}}{{/if}}
+</div>
+
+<div class="sec-head">Resource Rates by Experience Level</div>
+<p style="font-size:7.5pt;color:#555;margin-bottom:10px;">All rates are quoted on a monthly basis in Indonesian Rupiah (IDR) and are exclusive of PPN 11%. Rates represent the range based on specific experience and skill set.</p>
+
+{{#each grouped}}
+<span class="level-badge level-{{level}}">{{level}}</span>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th style="width:18%">Category</th>
+      <th style="width:26%">Role / Position</th>
+      <th style="width:22%">Monthly Rate Min</th>
+      <th style="width:22%">Monthly Rate Max</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each roles}}
+    <tr>
+      <td>{{category}}</td>
+      <td style="font-weight:600;">{{role}}</td>
+      <td class="rate-cell">{{minRateFormatted}}</td>
+      <td class="rate-cell">{{maxRateFormatted}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+{{/each}}
+
+<p style="font-size:7.5pt;color:#888;margin-top:4px;margin-bottom:12px;">* Rates are indicative and may vary based on project scope, engagement duration, and specific technical requirements. Final rates confirmed at time of quotation.</p>
+
+<div class="sig-box">
+  <div class="sig-for">For PT Nityo Infotech Indonesia</div>
+  <span class="sig-lbl">Name</span>
+  <div class="sig-val">{{smName}}</div>
+  <span class="sig-lbl">Title</span>
+  <div class="sig-val">{{smTitle}}</div>
+  <span class="sig-lbl">Signature</span>
+  {{#if smSignatureBase64}}
+  <img class="sig-img" src="data:image/png;base64,{{smSignatureBase64}}" alt="Signature"/>
+  {{else}}
+  <div class="sig-space"></div>
+  {{/if}}
+  <span class="sig-lbl">Date</span>
+  <div class="sig-val">{{dateStr}}</div>
+</div>
+
+</body>
+</html>

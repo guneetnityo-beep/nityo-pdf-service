@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<style>
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.header-logo { height: 42px; object-fit: contain; }
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 8.5pt;
+  color: #1a1a1a;
+  line-height: 1.4;
+  background: #fff;
+}
+
+/* ── Variables ── */
+:root {
+  --blue:   #004AAB;
+  --blue2:  #0a58d1;
+  --border: #e2e6ea;
+  --soft:   #f6f8fb;
+  --muted:  #6b7280;
+}
+
+/* ── Watermark ── */
+.wm {
+  position: fixed;
+  top: 45%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 72pt;
+  font-weight: 900;
+  color: rgba(0, 74, 171, 0.04);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+  letter-spacing: 6px;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--blue);
+  margin-bottom: 10px;
+}
+.header-left .co-name { font-size: 13pt; font-weight: 800; color: var(--blue); line-height: 1.1; }
+.header-left .co-sub  { font-size: 7.5pt; color: #555; line-height: 1.6; margin-top: 3px; }
+
+
+/* ── Title bar ── */
+.title-bar {
+  background: linear-gradient(120deg, var(--blue) 0%, var(--blue2) 100%);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+.tb-left .tb-title { font-size: 18pt; font-weight: 800; letter-spacing: 1px; line-height: 1; }
+.tb-left .tb-rev   { font-size: 7.5pt; margin-top: 4px; background: rgba(255,255,255,0.18); display: inline-block; padding: 2px 8px; border-radius: 10px; }
+.tb-right          { text-align: right; font-size: 8pt; line-height: 1.9; }
+.tb-right strong   { font-size: 8.5pt; }
+
+/* ── From/To ── */
+.from-to {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  font-size: 8pt;
+}
+.ft-head {
+  background: var(--soft);
+  font-weight: 700;
+  font-size: 7.5pt;
+  text-align: center;
+  padding: 5px 8px;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+}
+.ft-head + .ft-head { border-left: 1px solid var(--border); }
+.ft-cell       { padding: 8px 10px; line-height: 1.75; }
+.ft-cell + .ft-cell { border-left: 1px solid var(--border); }
+.ft-lbl        { font-weight: 700; color: var(--blue); }
+
+/* ── Section heading ── */
+.sec-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9pt;
+  font-weight: 700;
+  color: var(--blue);
+  margin: 12px 0 5px;
+}
+.sec-head::before {
+  content: "";
+  display: block;
+  width: 3px; height: 13px;
+  background: var(--blue);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Line items table ── */
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 8pt;
+  margin-bottom: 8px;
+}
+.tbl th {
+  background: var(--soft);
+  font-weight: 700;
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 2px solid var(--blue);
+  color: #222;
+  font-size: 7.5pt;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.tbl td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #f0f0f2;
+  vertical-align: middle;
+}
+.tbl tbody tr:last-child td { border-bottom: none; }
+.tbl tbody tr:nth-child(even) td { background: #fafbfc; }
+.ta-c { text-align: center; }
+.ta-r { text-align: right; }
+.w5  { width: 5%; }
+.w14 { width: 14%; }
+.w20 { width: 20%; }
+.w18 { width: 18%; }
+
+/* ── Breakdown table ── */
+.bd-wrap {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  font-size: 8pt;
+}
+.bd-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  border-bottom: 1px solid #f0f0f2;
+}
+.bd-row:last-child { border-bottom: none; }
+.bd-item   { color: #6b7280; }
+.bd-sub    { background: var(--soft); font-weight: 600; }
+.bd-add    { color: #166534; }
+.bd-subtract { color: #991b1b; }
+.bd-ppn    { background: #fffbeb; color: #92400e; font-weight: 600; }
+.bd-total  {
+  background: var(--blue);
+  color: #fff;
+  font-weight: 700;
+  font-size: 9.5pt;
+  padding: 8px 10px;
+}
+.bd-val { font-weight: 600; }
+
+/* ── Commercial terms ── */
+.comm-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 8pt;
+  margin-bottom: 12px;
+}
+.comm-tbl th {
+  background: var(--soft);
+  font-weight: 700;
+  padding: 5px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 7.5pt;
+  color: #444;
+}
+.comm-tbl td { padding: 5px 8px; border-bottom: 1px solid #f0f0f2; }
+.comm-tbl tbody tr:last-child td { border-bottom: none; }
+.comm-tbl td:first-child { font-weight: 700; color: var(--blue); width: 32%; }
+
+/* ── Signature + TC ── */
+.sig-tc {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.sig-box {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 8pt;
+}
+.sig-for   { font-weight: 700; color: var(--blue); margin-bottom: 8px; font-size: 8.5pt; }
+.sig-lbl   { font-size: 7pt; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 2px; }
+.sig-val   { font-weight: 600; padding-bottom: 4px; border-bottom: 1px solid #d1d5db; margin-bottom: 8px; font-size: 8.5pt; }
+.sig-img   { height: 28px; max-width: 150px; object-fit: contain; display: block; margin: 2px 0 4px; }
+.sig-space { height: 28px; border-bottom: 1px solid #d1d5db; margin-bottom: 8px; }
+
+.tc-box {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: var(--soft);
+  font-size: 7.5pt;
+  color: #444;
+  line-height: 1.55;
+}
+.tc-title { font-weight: 700; color: var(--blue); font-size: 8pt; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+.tc-list  { padding-left: 12px; }
+.tc-list li { margin-bottom: 3px; }
+
+
+
+@page { size: A4; margin: 12mm 14mm 14mm 14mm; }
+
+/* ── Page break rules ── */
+.tbl, .bd-wrap, .comm-tbl, .sig-tc, .from-to {
+  page-break-inside: avoid;
+}
+.sec-head {
+  page-break-after: avoid;
+}
+tr {
+  page-break-inside: avoid;
+}
+</style>
+</head>
+<body>
+
+<div class="wm">CONFIDENTIAL</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="co-name">PT Nityo Infotech Indonesia</div>
+    <div class="co-sub">
+      The East, Tower 3, Jl. Dr. Ide Anak Agung Gde Agung Kav. E3.2 No.1, Kuningan, Jakarta Selatan 12950<br>
+      {{smEmail}}
+    </div>
+  </div>
+  {{#if logoBase64}}
+  <img class="header-logo" src="data:image/png;base64,{{logoBase64}}" alt="Nityo Logo"/>
+  {{/if}}
+</div>
+
+<!-- Title bar -->
+<div class="title-bar">
+  <div class="tb-left">
+    <div class="tb-title">QUOTATION</div>
+    {{#if isRevision}}
+    <div class="tb-rev">Revision of {{originalQt}}</div>
+    {{/if}}
+  </div>
+  <div class="tb-right">
+    No: <strong>{{quotationNumber}}</strong><br>
+    Date: <strong>{{quotationDate}}</strong><br>
+    Valid Until: <strong>{{validUntil}}</strong>
+  </div>
+</div>
+
+<!-- From / To -->
+<div class="from-to">
+  <div class="ft-head">From</div><div class="ft-head">To</div>
+  <div class="ft-cell">
+    <span class="ft-lbl">Company:</span> PT Nityo Infotech Indonesia<br>
+    <span class="ft-lbl">Address:</span> The East, Tower 3, Jl. Dr. Ide Anak Agung Gde Agung Kav. E3.2 No.1, Kuningan, Jakarta Selatan 12950<br>
+    <span class="ft-lbl">Email:</span> {{smEmail}}
+  </div>
+  <div class="ft-cell">
+    <span class="ft-lbl">Company:</span> {{clientCompany}}<br>
+    <span class="ft-lbl">Address:</span> {{clientAddress}}<br>
+    <span class="ft-lbl">Attention:</span> {{clientContact}}<br>
+    <span class="ft-lbl">Email:</span> {{clientEmail}}
+  </div>
+</div>
+
+<!-- Line Items -->
+<div class="sec-head">Services</div>
+<table class="tbl">
+  <thead>
+    <tr>
+      <th class="ta-c w5">No</th>
+      <th>Description</th>
+      <th class="ta-c w14">Duration</th>
+      <th class="ta-r w20">Monthly Rate (IDR)</th>
+      <th class="ta-r w18">Total (IDR)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each lineItems}}
+    <tr>
+      <td class="ta-c">{{no}}</td>
+      <td>{{description}}</td>
+      <td class="ta-c">{{durationLabel}}</td>
+      <td class="ta-r">{{monthlyRateFormatted}}</td>
+      <td class="ta-r">{{totalFormatted}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+<!-- Grand total (always shown, from line items only) -->
+<div class="bd-wrap">
+  {{#if includePpn}}
+  <div class="bd-row bd-sub">
+    <span>Subtotal (excl. PPN)</span>
+    <span class="bd-val">{{subtotalFormatted}}</span>
+  </div>
+  <div class="bd-row bd-ppn">
+    <span>PPN 11%</span>
+    <span class="bd-val">+ {{ppnFormatted}}</span>
+  </div>
+  <div class="bd-row bd-total">
+    <span>Grand Total (incl. PPN)</span>
+    <span class="bd-val">{{totalInclPpnFormatted}}</span>
+  </div>
+  {{else}}
+  <div class="bd-row bd-total">
+    <span>Grand Total (excl. PPN)</span>
+    <span class="bd-val">{{subtotalFormatted}}</span>
+  </div>
+  {{/if}}
+</div>
+
+<!-- Breakdown (optional, separate, informational only) -->
+{{#if showBreakdown}}
+<div class="sec-head">Additional Breakdown <span style="font-size:7.5pt;font-weight:400;color:#6b7280;">(informational — not included in grand total above)</span></div>
+<div class="bd-wrap">
+  {{#each bdRows}}
+  <div class="bd-row bd-{{type}}">
+    <span>{{label}}</span>
+    <span class="bd-val">{{formatted}}</span>
+  </div>
+  {{/each}}
+</div>
+{{/if}}
+
+<!-- Commercial Terms -->
+<div class="sec-head">Commercial Terms</div>
+<table class="comm-tbl">
+  <thead><tr><th>Term</th><th>Detail</th></tr></thead>
+  <tbody>
+    {{#each commercial}}
+    <tr><td>{{term}}</td><td>{{detail}}</td></tr>
+    {{/each}}
+    <tr><td>Invoice To</td><td>{{clientCompany}}</td></tr>
+  </tbody>
+</table>
+
+<!-- Signatures + T&C -->
+<div class="sec-head">Authorized Signatures</div>
+<div class="sig-tc">
+  <div class="sig-box">
+    <div class="sig-for">For PT Nityo Infotech Indonesia</div>
+    <span class="sig-lbl">Name</span>
+    <div class="sig-val">{{smName}}</div>
+    <span class="sig-lbl">Title</span>
+    <div class="sig-val">{{smTitle}}</div>
+    <span class="sig-lbl">Signature</span>
+    {{#if smSignatureBase64}}
+    <img class="sig-img" src="data:image/png;base64,{{smSignatureBase64}}" alt="Signature"/>
+    {{else}}
+    <div class="sig-space"></div>
+    {{/if}}
+    <span class="sig-lbl">Date</span>
+    <div class="sig-val">{{quotationDate}}</div>
+  </div>
+  <div class="tc-box">
+    <div class="tc-title">Terms &amp; Conditions</div>
+    <ul class="tc-list">
+      {{#each terms}}
+      <li>{{this}}</li>
+      {{/each}}
+    </ul>
+  </div>
+</div>
+
+
+
+</body>
+</html>
