@@ -37,6 +37,19 @@ try {
   if (fs.existsSync(p)) logoBase64 = fs.readFileSync(p).toString("base64");
 } catch (_) {}
 
+// Load signatures from disk — filename = email address + .png
+// e.g. guneet.chhabra@nityo.com.png
+const signatures = {};
+try {
+  fs.readdirSync(__dirname)
+    .filter(f => f.endsWith(".png") && f.includes("@"))
+    .forEach(f => {
+      const email = f.replace(/\.png$/, "");
+      signatures[email] = fs.readFileSync(path.join(__dirname, f)).toString("base64");
+    });
+  console.log("Signatures loaded:", Object.keys(signatures));
+} catch (_) {}
+
 app.post("/generate-pdf", async (req, res) => {
   try {
     const data = { ...req.body };
@@ -45,7 +58,7 @@ app.post("/generate-pdf", async (req, res) => {
     data.smEmail          = (data.sender  && data.sender.email)           || "";
     data.smName           = (data.manager && data.manager.name)           || "";
     data.smTitle          = (data.manager && data.manager.title)          || "";
-    data.smSignatureBase64= (data.manager && data.manager.signatureBase64)|| "";
+    data.smSignatureBase64 = signatures[data.smEmail] || (data.manager && data.manager.signatureBase64) || "";
     data.logoBase64       = logoBase64;
     data.quotationDate    = data.quotationDate || formatDate(new Date());
     data.validUntil       = data.validUntil    || formatDate(addDays(new Date(), 30));
@@ -150,7 +163,7 @@ app.post("/generate-rate-card-pdf", async (req, res) => {
     data.smEmail           = (data.sender  && data.sender.email)            || "";
     data.smName            = (data.manager && data.manager.name)            || "";
     data.smTitle           = (data.manager && data.manager.title)           || "";
-    data.smSignatureBase64 = (data.manager && data.manager.signatureBase64) || "";
+    data.smSignatureBase64 = signatures[data.smEmail] || (data.manager && data.manager.signatureBase64) || "";
     data.logoBase64        = logoBase64;
 
     // Group roles by level
