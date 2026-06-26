@@ -240,6 +240,17 @@ body {
 
 
 @page { size: A4; margin: 12mm 14mm 14mm 14mm; }
+
+/* ── Page break rules ── */
+.tbl, .bd-wrap, .comm-tbl, .sig-tc, .from-to {
+  page-break-inside: avoid;
+}
+.sec-head {
+  page-break-after: avoid;
+}
+tr {
+  page-break-inside: avoid;
+}
 </style>
 </head>
 <body>
