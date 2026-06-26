@@ -67,14 +67,14 @@ app.post("/generate-pdf", async (req, res) => {
 
     const lineSubtotal = data.lineItems.reduce((s, i) => s + i.totalAmount, 0);
 
-    // ── Line items grand total (PPN applied here if toggled) ─────────
-    let grandTotal = lineSubtotal;
-    if (data.includePpn) {
-      grandTotal = lineSubtotal + Math.round(lineSubtotal * 0.11);
-    }
-    data.grandTotalFormatted = idr(grandTotal);
-    data.ppnFormatted        = idr(Math.round(lineSubtotal * 0.11));
-    data.totalInclPpnFormatted = idr(grandTotal);
+    // ── Totals (keep subtotal and grand total separate) ─────────────
+    const ppnAmount   = Math.round(lineSubtotal * 0.11);
+    const grandTotal  = data.includePpn ? lineSubtotal + ppnAmount : lineSubtotal;
+
+    data.subtotalFormatted     = idr(lineSubtotal);   // always excl. PPN
+    data.ppnFormatted          = idr(ppnAmount);
+    data.grandTotalFormatted   = idr(lineSubtotal);   // shown as subtotal row
+    data.totalInclPpnFormatted = idr(grandTotal);     // shown as grand total row
 
     // ── Breakdown rows (SEPARATE from line items — informational only) ─
     // These do NOT affect grandTotal. They are their own standalone table.
