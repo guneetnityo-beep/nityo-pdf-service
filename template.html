@@ -3,269 +3,86 @@
 <head>
 <meta charset="UTF-8"/>
 <style>
-*, *::before, *::after {
-  margin: 0; padding: 0; box-sizing: border-box;
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
-}
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 9.5pt; color: #1a1a1a; line-height: 1.35; background:#fff;
+  }
 
-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 8.5pt;
-  color: #1a1a1a;
-  line-height: 1.4;
-  background: #fff;
-}
+  .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+  .company-name { font-size:14pt; font-weight:700; margin-bottom:4px; }
+  .company-sub  { font-size:8pt; color:#444; line-height:1.6; }
+  .logo         { height:42px; object-fit:contain; }
 
-/* ── Variables ── */
-:root {
-  --blue:   #004AAB;
-  --blue2:  #0a58d1;
-  --border: #e2e6ea;
-  --soft:   #f6f8fb;
-  --muted:  #6b7280;
-}
+  hr { border:none; border-top:1px solid #333; margin:8px 0; }
 
-/* ── Watermark ── */
-.wm {
-  position: fixed;
-  top: 45%; left: 50%;
-  transform: translate(-50%, -50%) rotate(-30deg);
-  font-size: 72pt;
-  font-weight: 900;
-  color: rgba(0, 74, 171, 0.04);
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 0;
-  letter-spacing: 6px;
-}
+  .title-bar {
+    background:#004AAB; color:#fff;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 12px; margin-bottom:8px;
+  }
+  .title-bar .qt-title { font-size:18pt; font-weight:700; }
+  .title-bar .qt-meta  { text-align:right; font-size:8.5pt; line-height:1.9; }
 
-/* ── Header ── */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--blue);
-  margin-bottom: 10px;
-}
-.header-left .co-name { font-size: 13pt; font-weight: 800; color: var(--blue); line-height: 1.1; }
-.header-left .co-sub  { font-size: 7.5pt; color: #555; line-height: 1.6; margin-top: 3px; }
+  .from-to { display:grid; grid-template-columns:1fr 1fr; border:1px solid #ccc; margin-bottom:8px; }
+  .ft-header {
+    background:#f2f2f2; font-weight:700; text-align:center;
+    padding:4px 10px; font-size:8.5pt; border-bottom:1px solid #ccc;
+  }
+  .ft-header:first-child { border-right:1px solid #ccc; }
+  .ft-cell { padding:8px 10px; font-size:8.5pt; line-height:1.8; }
+  .ft-cell:first-child { border-right:1px solid #ccc; }
+  .lbl { font-weight:700; }
 
+  .section-title { color:#004AAB; font-size:9.5pt; font-weight:700; margin:10px 0 4px; }
 
-/* ── Title bar ── */
-.title-bar {
-  background: linear-gradient(120deg, var(--blue) 0%, var(--blue2) 100%);
-  color: #fff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 14px;
-  border-radius: 6px;
-  margin-bottom: 10px;
-}
-.tb-left .tb-title { font-size: 18pt; font-weight: 800; letter-spacing: 1px; line-height: 1; }
-.tb-left .tb-rev   { font-size: 7.5pt; margin-top: 4px; background: rgba(255,255,255,0.18); display: inline-block; padding: 2px 8px; border-radius: 10px; }
-.tb-right          { text-align: right; font-size: 8pt; line-height: 1.9; }
-.tb-right strong   { font-size: 8.5pt; }
+  table { width:100%; border-collapse:collapse; font-size:8.5pt; margin-bottom:6px; }
+  table th {
+    background:#f2f2f2; font-weight:700; padding:6px 8px;
+    border:1px solid #ccc; text-align:left;
+  }
+  table td { padding:6px 8px; border:1px solid #ccc; vertical-align:top; }
+  .c { text-align:center; }
+  .r { text-align:right; }
 
-/* ── From/To ── */
-.from-to {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 12px;
-  font-size: 8pt;
-}
-.ft-head {
-  background: var(--soft);
-  font-weight: 700;
-  font-size: 7.5pt;
-  text-align: center;
-  padding: 5px 8px;
-  color: var(--blue);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--border);
-}
-.ft-head + .ft-head { border-left: 1px solid var(--border); }
-.ft-cell       { padding: 8px 10px; line-height: 1.75; }
-.ft-cell + .ft-cell { border-left: 1px solid var(--border); }
-.ft-lbl        { font-weight: 700; color: var(--blue); }
+  .gt-row { width:100%; border-collapse:collapse; margin-bottom:8px; }
+  .gt-row td { background:#004AAB; color:#fff; font-weight:700; padding:7px 10px; font-size:9.5pt; }
 
-/* ── Section heading ── */
-.sec-head {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 9pt;
-  font-weight: 700;
-  color: var(--blue);
-  margin: 12px 0 5px;
-}
-.sec-head::before {
-  content: "";
-  display: block;
-  width: 3px; height: 13px;
-  background: var(--blue);
-  border-radius: 2px;
-  flex-shrink: 0;
-}
+  .terms-table td:first-child { font-weight:600; width:28%; }
 
-/* ── Line items table ── */
-.tbl {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-  font-size: 8pt;
-  margin-bottom: 8px;
-}
-.tbl th {
-  background: var(--soft);
-  font-weight: 700;
-  padding: 6px 8px;
-  text-align: left;
-  border-bottom: 2px solid var(--blue);
-  color: #222;
-  font-size: 7.5pt;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-.tbl td {
-  padding: 6px 8px;
-  border-bottom: 1px solid #f0f0f2;
-  vertical-align: middle;
-}
-.tbl tbody tr:last-child td { border-bottom: none; }
-.tbl tbody tr:nth-child(even) td { background: #fafbfc; }
-.ta-c { text-align: center; }
-.ta-r { text-align: right; }
-.w5  { width: 5%; }
-.w14 { width: 14%; }
-.w20 { width: 20%; }
-.w18 { width: 18%; }
+  .signatures { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:10px; font-size:8.5pt; }
+  .sig-co  { font-weight:700; margin-bottom:6px; }
+  .sig-row { display:flex; gap:6px; line-height:2.4; margin-top:2px; }
+  .sig-lbl { white-space:nowrap; }
+  .sig-ln  { flex:1; border-bottom:1px solid #333; }
 
-/* ── Breakdown table ── */
-.bd-wrap {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 12px;
-  font-size: 8pt;
-}
-.bd-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 10px;
-  border-bottom: 1px solid #f0f0f2;
-}
-.bd-row:last-child { border-bottom: none; }
-.bd-item   { color: #6b7280; }
-.bd-sub    { background: var(--soft); font-weight: 600; }
-.bd-add    { color: #166534; }
-.bd-subtract { color: #991b1b; }
-.bd-ppn    { background: #fffbeb; color: #92400e; font-weight: 600; }
-.bd-total  {
-  background: var(--blue);
-  color: #fff;
-  font-weight: 700;
-  font-size: 9.5pt;
-  padding: 8px 10px;
-}
-.bd-val { font-weight: 600; }
+  .tc { margin-left:14px; font-size:8pt; line-height:1.7; color:#333; }
+  .tc li { margin-bottom:2px; }
 
-/* ── Commercial terms ── */
-.comm-tbl {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-  font-size: 8pt;
-  margin-bottom: 12px;
-}
-.comm-tbl th {
-  background: var(--soft);
-  font-weight: 700;
-  padding: 5px 8px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-  font-size: 7.5pt;
-  color: #444;
-}
-.comm-tbl td { padding: 5px 8px; border-bottom: 1px solid #f0f0f2; }
-.comm-tbl tbody tr:last-child td { border-bottom: none; }
-.comm-tbl td:first-child { font-weight: 700; color: var(--blue); width: 32%; }
-
-/* ── Signature + TC ── */
-.sig-tc {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  align-items: start;
-}
-
-.sig-box {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 10px 12px;
-  font-size: 8pt;
-}
-.sig-for   { font-weight: 700; color: var(--blue); margin-bottom: 8px; font-size: 8.5pt; }
-.sig-lbl   { font-size: 7pt; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 2px; }
-.sig-val   { font-weight: 600; padding-bottom: 4px; border-bottom: 1px solid #d1d5db; margin-bottom: 8px; font-size: 8.5pt; }
-.sig-img   { height: 28px; max-width: 150px; object-fit: contain; display: block; margin: 2px 0 4px; }
-.sig-space { height: 28px; border-bottom: 1px solid #d1d5db; margin-bottom: 8px; }
-
-.tc-box {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 10px 12px;
-  background: var(--soft);
-  font-size: 7.5pt;
-  color: #444;
-  line-height: 1.55;
-}
-.tc-title { font-weight: 700; color: var(--blue); font-size: 8pt; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
-.tc-list  { padding-left: 12px; }
-.tc-list li { margin-bottom: 3px; }
-
-
-
-@page { size: A4; margin: 12mm 14mm 14mm 14mm; }
+  @media print { body { -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
 </style>
 </head>
 <body>
 
-<div class="wm">CONFIDENTIAL</div>
-
 <!-- Header -->
 <div class="header">
-  <div class="header-left">
-    <div class="co-name">PT Nityo Infotech Indonesia</div>
-    <div class="co-sub">
-      The East, Tower 3, Jl. Dr. Ide Anak Agung Gde Agung Kav. E3.2 No.1, Kuningan, Jakarta Selatan 12950<br>
-      {{smEmail}}
+  <div>
+    <div class="company-name">PT Nityo Infotech Indonesia</div>
+    <div class="company-sub">
+      The East, Tower 3, Jl. Dr. Ide Anak Agung Gde Agung Kav. E3.2 No.1,<br>
+      Kuningan, Jakarta Selatan 12950, Indonesia<br>
+      Email: guneet.chhabra@nityo.com
     </div>
   </div>
-
 </div>
+
+<hr/>
 
 <!-- Title bar -->
 <div class="title-bar">
-  <div class="tb-left">
-    <div class="tb-title">QUOTATION</div>
-    {{#if isRevision}}
-    <div class="tb-rev">Revision of {{originalQt}}</div>
-    {{/if}}
-  </div>
-  <div class="tb-right">
-    No: <strong>{{quotationNumber}}</strong><br>
+  <span class="qt-title">QUOTATION</span>
+  <div class="qt-meta">
+    Quotation No: <strong>{{quotationNumber}}</strong><br>
     Date: <strong>{{quotationDate}}</strong><br>
     Valid Until: <strong>{{validUntil}}</strong>
   </div>
@@ -273,122 +90,106 @@ body {
 
 <!-- From / To -->
 <div class="from-to">
-  <div class="ft-head">From</div><div class="ft-head">To</div>
+  <div class="ft-header">From</div>
+  <div class="ft-header">To</div>
   <div class="ft-cell">
-    <span class="ft-lbl">Company:</span> PT Nityo Infotech Indonesia<br>
-    <span class="ft-lbl">Address:</span> The East, Tower 3, Jl. Dr. Ide Anak Agung Gde Agung Kav. E3.2 No.1, Kuningan, Jakarta Selatan 12950<br>
-    <span class="ft-lbl">Email:</span> {{smEmail}}
+    <span class="lbl">Company:</span><br>PT Nityo Infotech Indonesia<br><br>
+    <span class="lbl">Address:</span><br>
+    The East, Tower 3, Jl. Dr. Ide Anak Agung Gde Agung Kav. E3.2 No.1, Kuningan, Jakarta Selatan 12950<br><br>
+    <span class="lbl">Email:</span> guneet.chhabra@nityo.com
   </div>
   <div class="ft-cell">
-    <span class="ft-lbl">Company:</span> {{clientCompany}}<br>
-    <span class="ft-lbl">Address:</span> {{clientAddress}}<br>
-    <span class="ft-lbl">Attention:</span> {{clientContact}}<br>
-    <span class="ft-lbl">Email:</span> {{clientEmail}}
+    <span class="lbl">Company:</span><br>{{clientCompany}}<br><br>
+    <span class="lbl">Address:</span><br>{{clientAddress}}<br><br>
+    <span class="lbl">Attention:</span> {{clientContact}}<br>
+    <span class="lbl">Email:</span> {{clientEmail}}
   </div>
 </div>
 
-<!-- Line Items -->
-<div class="sec-head">Services</div>
-<table class="tbl">
+<!-- Scope -->
+<div class="section-title">Scope of Services</div>
+<p style="font-size:8.5pt;margin-bottom:6px;color:#333;">
+  We are pleased to submit this quotation for professional staffing and resource services as detailed below.
+  All rates are quoted on a monthly basis for the duration specified.
+</p>
+
+<!-- Line items -->
+<table>
   <thead>
     <tr>
-      <th class="ta-c w5">No</th>
+      <th class="c" style="width:5%">No</th>
       <th>Description</th>
-      <th class="ta-c w14">Duration</th>
-      <th class="ta-r w20">Monthly Rate (IDR)</th>
-      <th class="ta-r w18">Total (IDR)</th>
+      <th class="c" style="width:14%">Duration</th>
+      <th class="r" style="width:20%">Monthly Rate (IDR)</th>
+      <th class="r" style="width:18%">Total (IDR)</th>
     </tr>
   </thead>
   <tbody>
     {{#each lineItems}}
     <tr>
-      <td class="ta-c">{{no}}</td>
+      <td class="c">{{no}}</td>
       <td>{{description}}</td>
-      <td class="ta-c">{{durationLabel}}</td>
-      <td class="ta-r">{{monthlyRateFormatted}}</td>
-      <td class="ta-r">{{totalFormatted}}</td>
+      <td class="c">{{durationLabel}}</td>
+      <td class="r">{{monthlyRateFormatted}}</td>
+      <td class="r">{{totalFormatted}}</td>
     </tr>
     {{/each}}
   </tbody>
 </table>
 
-<!-- Grand total (always shown, from line items only) -->
-<div class="bd-wrap">
-  {{#if includePpn}}
-  <div class="bd-row bd-sub">
-    <span>Subtotal (excl. PPN)</span>
-    <span class="bd-val">{{grandTotalFormatted}}</span>
-  </div>
-  <div class="bd-row bd-ppn">
-    <span>PPN 11%</span>
-    <span class="bd-val">+ {{ppnFormatted}}</span>
-  </div>
-  <div class="bd-row bd-total">
-    <span>Grand Total (incl. PPN)</span>
-    <span class="bd-val">{{totalInclPpnFormatted}}</span>
-  </div>
-  {{else}}
-  <div class="bd-row bd-total">
-    <span>Grand Total (excl. PPN)</span>
-    <span class="bd-val">{{grandTotalFormatted}}</span>
-  </div>
-  {{/if}}
-</div>
+<!-- Grand total -->
+<table class="gt-row">
+  <tr>
+    <td>Grand Total (Excl. PPN)</td>
+    <td class="r">{{grandTotalFormatted}}</td>
+  </tr>
+</table>
 
-<!-- Breakdown (optional, separate, informational only) -->
-{{#if showBreakdown}}
-<div class="sec-head">Breakdown</div>
-<div class="bd-wrap">
-  {{#each bdRows}}
-  <div class="bd-row bd-{{type}}">
-    <span>{{label}}</span>
-    <span class="bd-val">{{formatted}}</span>
-  </div>
-  {{/each}}
-</div>
-{{/if}}
-
-<!-- Commercial Terms -->
-<div class="sec-head">Commercial Terms</div>
-<table class="comm-tbl">
+<!-- Commercial terms -->
+<div class="section-title">Commercial Terms</div>
+<table class="terms-table" style="margin-bottom:8px;">
   <thead><tr><th>Term</th><th>Detail</th></tr></thead>
   <tbody>
-    {{#each commercial}}
-    <tr><td>{{term}}</td><td>{{detail}}</td></tr>
-    {{/each}}
+    <tr><td>Currency</td><td>Indonesian Rupiah (IDR)</td></tr>
+    <tr><td>Billing</td><td>Monthly invoice based on actual service period rendered</td></tr>
+    <tr><td>Payment Terms</td><td>Net 14 days from date of invoice</td></tr>
     <tr><td>Invoice To</td><td>{{clientCompany}}</td></tr>
+    <tr><td>Quotation Validity</td><td>30 days from date of issue</td></tr>
   </tbody>
 </table>
 
-<!-- Signatures + T&C -->
-<div class="sec-head">Authorized Signatures</div>
-<div class="sig-tc">
-  <div class="sig-box">
-    <div class="sig-for">For PT Nityo Infotech Indonesia</div>
-    <span class="sig-lbl">Name</span>
-    <div class="sig-val">{{smName}}</div>
-    <span class="sig-lbl">Title</span>
-    <div class="sig-val">{{smTitle}}</div>
-    <span class="sig-lbl">Signature</span>
-    {{#if smSignatureBase64}}
-    <img class="sig-img" src="data:image/png;base64,{{smSignatureBase64}}" alt="Signature"/>
-    {{else}}
-    <div class="sig-space"></div>
-    {{/if}}
-    <span class="sig-lbl">Date</span>
-    <div class="sig-val">{{quotationDate}}</div>
+<!-- Signatures -->
+<div class="section-title">Authorized Signatures</div>
+<div class="signatures">
+  <div>
+    <div class="sig-co">For PT Nityo Infotech Indonesia</div>
+    <div class="sig-row"><span class="sig-lbl">Name:</span><span class="sig-ln"></span></div>
+    <div style="font-size:8.5pt;margin-top:-6px;">Guneet Chhabra</div>
+    <div class="sig-row"><span class="sig-lbl">Title:</span><span class="sig-ln"></span></div>
+    <div style="font-size:8.5pt;margin-top:-6px;">Growth Consultant</div>
+    <div class="sig-row" style="margin-top:18px;"><span class="sig-lbl">Signature:</span><span class="sig-ln"></span></div>
+    <div class="sig-row"><span class="sig-lbl">Date:</span><span class="sig-ln"></span></div>
   </div>
-  <div class="tc-box">
-    <div class="tc-title">Terms &amp; Conditions</div>
-    <ul class="tc-list">
-      {{#each terms}}
-      <li>{{this}}</li>
-      {{/each}}
-    </ul>
+  <div>
+    <div class="sig-co">Accepted by {{clientCompany}}</div>
+    <div class="sig-row"><span class="sig-lbl">Name:</span><span class="sig-ln"></span></div>
+    <div style="font-size:8.5pt;margin-top:-6px;">{{clientSigner}}</div>
+    <div class="sig-row"><span class="sig-lbl">Title:</span><span class="sig-ln"></span></div>
+    <div style="font-size:8.5pt;margin-top:-6px;">{{clientTitle}}</div>
+    <div class="sig-row" style="margin-top:18px;"><span class="sig-lbl">Signature:</span><span class="sig-ln"></span></div>
+    <div class="sig-row"><span class="sig-lbl">Date:</span><span class="sig-ln"></span></div>
   </div>
 </div>
 
-
+<!-- T&C -->
+<div class="section-title" style="margin-top:10px;">Terms &amp; Conditions</div>
+<ul class="tc">
+  <li>This quotation is not binding until a Purchase Order or written acceptance is received by PT Nityo Infotech Indonesia.</li>
+  <li>All quoted rates are <strong>exclusive of PPN (Pajak Pertambahan Nilai)</strong>. PPN at the prevailing rate (currently 11% per UU HPP No. 7 Tahun 2021) shall be borne by the client and reflected on the final invoice.</li>
+  <li>PT Nityo Infotech Indonesia reserves the right to withdraw or amend this quotation after the validity period.</li>
+  <li>All services are subject to the Master Service Agreement or mutually agreed terms between both parties.</li>
+  <li>For queries relating to this quotation, contact guneet.chhabra@nityo.com.</li>
+</ul>
 
 </body>
 </html>
