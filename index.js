@@ -155,10 +155,17 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`PDF service on :${PORT}`));
 
 // ── Rate Card PDF endpoint ────────────────────────────────────
-const rcTemplateSrc = fs.readFileSync(path.join(__dirname, "rate-card-template.html"), "utf8");
-const rcTemplate    = Handlebars.compile(rcTemplateSrc);
+let rcTemplate = null;
+try {
+  const rcTemplateSrc = fs.readFileSync(path.join(__dirname, "rate-card-template.html"), "utf8");
+  rcTemplate = Handlebars.compile(rcTemplateSrc);
+  console.log("Rate card template loaded");
+} catch(e) {
+  console.warn("Rate card template not found:", e.message);
+}
 
 app.post("/generate-rate-card-pdf", async (req, res) => {
+  if (!rcTemplate) return res.status(500).json({ error: "Rate card template not loaded — check rate-card-template.html is deployed" });
   try {
     const data = { ...req.body };
 
