@@ -65,16 +65,18 @@ app.post("/generate-pdf", async (req, res) => {
 
     // ── Enrich line items ────────────────────────────────
     data.lineItems = (data.lineItems || []).map((item, i) => {
-      const rate   = parseIDR(item.monthlyRate);
-      const months = parseInt(item.durationMonths) || 1;
-      const total  = rate * months;
+      const rate     = parseIDR(item.monthlyRate);
+      const isDaily  = item.rateType === "daily";
+      const months   = parseInt(item.durationMonths) || 1;
+      const total    = isDaily ? rate : rate * months;
       return {
         ...item,
         no                  : i + 1,
         totalAmount         : total,
         monthlyRateFormatted: idr(rate),
         totalFormatted      : idr(total),
-        durationLabel       : `${months} Month${months > 1 ? "s" : ""}`,
+        durationLabel       : isDaily ? "Daily" : `${months} Month${months > 1 ? "s" : ""}`,
+        rateLabel           : isDaily ? "Daily Rate (IDR)" : "Monthly Rate (IDR)",
       };
     });
 
@@ -174,6 +176,7 @@ app.post("/generate-rate-card-pdf", async (req, res) => {
         ...r,
         minRateFormatted: "IDR " + Math.round(r.minRate||0).toLocaleString("id-ID"),
         maxRateFormatted: "IDR " + Math.round(r.maxRate||0).toLocaleString("id-ID"),
+        rateTypeLabel   : r.rateType === "daily" ? "Daily" : "Monthly",
       })),
     })).filter(g => g.roles.length > 0);
 
