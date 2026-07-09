@@ -67,16 +67,17 @@ app.post("/generate-pdf", async (req, res) => {
     data.lineItems = (data.lineItems || []).map((item, i) => {
       const rate     = parseIDR(item.monthlyRate);
       const isDaily  = item.rateType === "daily";
+      const isOnetime= item.rateType === "onetime";
       const months   = parseInt(item.durationMonths) || 1;
-      const total    = isDaily ? rate : rate * months;
+      const total    = (isDaily || isOnetime) ? rate : rate * months;
       return {
         ...item,
         no                  : i + 1,
         totalAmount         : total,
         monthlyRateFormatted: idr(rate),
         totalFormatted      : idr(total),
-        durationLabel       : isDaily ? "Daily" : `${months} Month${months > 1 ? "s" : ""}`,
-        rateLabel           : isDaily ? "Daily Rate (IDR)" : "Monthly Rate (IDR)",
+        durationLabel       : isOnetime ? "One-time" : isDaily ? "Daily" : `${months} Month${months > 1 ? "s" : ""}`,
+        rateLabel           : isOnetime ? "Amount (IDR)" : isDaily ? "Daily Rate (IDR)" : "Monthly Rate (IDR)",
       };
     });
 
